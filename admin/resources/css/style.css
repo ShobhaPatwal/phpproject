@@ -358,11 +358,21 @@ ul.content-box-tabs li a.current {
 #main-content tbody tr.alt-row {
                 background: #f3f3f3;
                 }
-                
+ 
+#main-content table td.product img {
+                width: 60px;
+                height: 60px;
+                margin-right: 10px;
+                }
+#main-content table td.product > * {
+                vertical-align: middle;
+                }               
+
 #main-content table td,
 #main-content table th {
                 padding: 10px;
                 line-height: 1.3em;
+                text-transform: capitalize;
                 }        
 				
 #main-content table tfoot td .bulk-actions {

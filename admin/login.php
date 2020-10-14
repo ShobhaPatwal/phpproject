@@ -1,3 +1,21 @@
+<?php
+
+session_start();
+include('../config.php');
+include('../functions.php');
+$errors = array(); 
+
+if (isset($_POST['submit'])) {
+    $username = isset($_POST['username'])?$_POST['username']:'';
+    $password = isset($_POST['password'])?$_POST['password']:'';
+	$remember = isset($_POST['remember'])?$_POST['remember']:'';
+	
+    $login = loginuser($username, $password, $remember);
+
+} 
+
+?>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -18,37 +36,40 @@
 		<div id="login-wrapper" class="png_bg">
 			<div id="login-top">
 			
-				<h1>Simpla Admin</h1>
+				<h1>Login</h1>
 				<!-- Logo (221px width) -->
 				<img id="logo" src="resources/images/logo.png" alt="Simpla Admin logo" />
 			</div> <!-- End #logn-top -->
 			
 			<div id="login-content">
 				
-				<form action="index.html">
+				<form action="login.php" method="POST">
 				
 					<div class="notification information png_bg">
-						<div>
-							Just click "Sign In". No password needed.
-						</div>
+					<?php  if (sizeof($errors) > 0) : ?>
+                        <div>
+						<?php foreach ($errors as $error) : echo $error['msg'];
+						endforeach;  ?>
+						</div> 
+                    <?php  endif; ?>
 					</div>
 					
 					<p>
 						<label>Username</label>
-						<input class="text-input" type="text" />
+						<input class="text-input" type="text"  name="username" value="<?php if(isset($_COOKIE["username"])) { echo $_COOKIE["username"]; } ?>" required />
 					</p>
 					<div class="clear"></div>
 					<p>
 						<label>Password</label>
-						<input class="text-input" type="password" />
+						<input class="text-input" type="password" name="password" value="<?php if(isset($_COOKIE["password"])) { echo $_COOKIE["password"]; } ?>" required />
 					</p>
 					<div class="clear"></div>
 					<p id="remember-password">
-						<input type="checkbox" />Remember me
+						<input type="checkbox" name="remember" <?php if(isset($_COOKIE["username"])) { ?> checked <?php } ?> />Remember me
 					</p>
 					<div class="clear"></div>
 					<p>
-						<input class="button" type="submit" value="Sign In" />
+						<input class="button" type="submit" name="submit" value="Sign In" />
 					</p>
 					
 				</form>

@@ -5,22 +5,22 @@
         $productmenu = array('products.php','categories.php','tags.php');
     ?>
 			
-			<h1 id="sidebar-title"><a href="#">Simpla Admin</a></h1>
+			<h1 id="sidebar-title"><a href=#"index.php>Simpla Admin</a></h1>
 		  
 			<!-- Logo (221px wide) -->
-			<a href="#"><img id="logo" src="resources/images/logo.png" alt="Simpla Admin logo" /></a>
+			<a href="index.php"><img id="logo" src="resources/images/logo.png" alt="Simpla Admin logo" /></a>
 		  
 			<!-- Sidebar Profile links -->
 			<div id="profile-links">
-				Hello, <a href="#" title="Edit your profile">John Doe</a>, you have <a href="#messages" rel="modal" title="3 Messages">3 Messages</a><br />
+				Hello, <a href="#" title="Edit your profile"><?php echo $_SESSION['userdata']['username']; ?></a>, you have <a href="#messages" rel="modal" title="3 Messages">3 Messages</a><br />
 				<br />
-				<a href="#" title="View the Site">View the Site</a> | <a href="#" title="Sign Out">Sign Out</a>
+				<a href="http://localhost/training/projects" title="View the Site">View the Site</a> | <a href="logout.php" title="Sign Out">Sign Out</a>
 			</div>        
 			
 			<ul id="main-nav">  <!-- Accordion Menu -->
 				
 				<li>
-					<a href="http://www.google.com/" class="nav-top-item no-submenu"> <!-- Add the class "no-submenu" to menu items with no sub menu -->
+					<a href="index.php" class="nav-top-item no-submenu <?php if($filename == 'index.php'): ?>current<?php endif; ?>"> <!-- Add the class "no-submenu" to menu items with no sub menu -->
 						Dashboard
 					</a>       
 				</li>
@@ -37,11 +37,11 @@
 				</li>
 				
 				<li>
-					<a href="#" class="nav-top-item">
+					<a href="#" class="nav-top-item <?php if($filename == 'users.php'): ?>current<?php endif; ?>">
 						Users
 					</a>
 					<ul>
-						<li><a href="users.php">Manage Users</a></li>
+						<li><a <?php if($filename == 'users.php'): ?>class="current"<?php endif; ?> href="users.php">Manage Users</a></li>
 					</ul>
                 </li>
                 
