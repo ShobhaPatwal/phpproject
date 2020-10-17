@@ -1,5 +1,5 @@
-<?php include('header.php'); ?>
-    <?php include('sidebar.php'); ?>
+<?php include('header.php');?>
+	<?php include('sidebar.php'); ?>
 		
 		<div id="main-content"> <!-- Main Content Section with everything -->
 			

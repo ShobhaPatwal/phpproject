@@ -12,7 +12,7 @@
 			</noscript>
 			
 			<!-- Page Head -->
-			<h2>Manage Tags</h2>
+			<h2>Manage Orders</h2>
 			<p id="page-intro">What would you like to do?</p>
 			
 			<div class="clear"></div> <!-- End .clear -->
@@ -21,13 +21,7 @@
 				
 				<div class="content-box-header">
 					
-					<h3>Tags</h3>
-					
-					<ul class="content-box-tabs">
-						<li><a href="#tab1" class="default-tab">Manage</a></li> <!-- href must be unique and match the id of target div -->
-						<li><a href="#tab2">Add</a></li>
-					</ul>
-					
+					<h3>Orders</h3>
 					<div class="clear"></div>
 					
 				</div> <!-- End .content-box-header -->
@@ -45,16 +39,6 @@
 							</div>
 						</div>
 						<?php endif; ?> 
-						
-					    <?php if(isset($_SESSION['success'])) : ?>
-						<div class="notification success png_bg">
-							<a href="#" class="close"><img src="resources/images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>
-							<div>
-								<?php echo $_SESSION['success']; 
-								unset($_SESSION['success']); ?>
-							</div>
-						</div>
-						<?php endif; ?> 
 						<?php if(isset($_SESSION['message'])) : ?>
 						<div class="notification success png_bg">
 							<a href="#" class="close"><img src="resources/images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>
@@ -65,13 +49,15 @@
 						</div>
 						<?php endif; ?> 
 						<!-- End Notifications -->
-						<form action="deleteTag.php" method="POST">
+						<form action="deleteOrder.php" method="POST">
 							<table>
 								<thead>
 									<tr>
 										<th><input class="check-all" type="checkbox" /></th>
-										<th>Tag Id</th>
-										<th>Tag Name</th>
+										<th>Order Id</th>
+										<th>Total Price</th>
+										<th>Status</th>
+										<th>Date Time</th>
 										<th>Action</th>
 									</tr>							
 								</thead>
@@ -102,7 +88,7 @@
 													
 								<tbody> 
 								<?php
-								$sql = "SELECT * FROM tags";
+								$sql = "SELECT * FROM orders";
 								$result = $conn->query($sql);
 								if ($result->num_rows > 0) {
 									// output data of each row
@@ -112,10 +98,14 @@
 								<tr class="alt-row">
 								    <td><input type="checkbox" name="checkbox[]" id="checkbox[]" value="<?php echo $row['id']; ?>"></td>
 									<td><?php echo $row['id'];?></td>
-									<td><?php echo $row['name'];?></td>
+									<td>$<?php echo $row['total'];?></td>
+									<td><?php echo $row['status'];?></td>
+									<td><?php $datetime = new DateTime($row['datetime']);
+									 echo $datetime->format('d-m-Y h:i:sA'); ?></td>
 									<td>
 										<!-- Icons -->
-										<a href="deleteTag.php?action=remove&tag_id=<?php echo $row["id"]; ?>" title="Delete"><img src="resources/images/icons/cross.png" alt="Delete"></a> 
+										<a href="viewOrder.php?order_id=<?php echo $row["id"]; ?>" title="View Order"><img src="resources/images/icons/paper_content_pencil_48.png" width="20px" height="20px" alt="View order"></a> 
+										<a href="deleteOrder.php?action=remove&order_id=<?php echo $row["id"]; ?>" title="Delete"><img src="resources/images/icons/cross.png" alt="Delete"></a> 
 									</td>
 								</tr>
 										
@@ -129,59 +119,11 @@
 							</table>
 						</form>
 						
-					</div> <!-- End #tab1 -->
-					
-					<div class="tab-content" id="tab2">
-						<form action="addTag.php" method="POST">
-							
-							<fieldset> <!-- Set class to "column-left" or "column-right" on fieldsets to divide the form into columns -->
-								
-								<p>
-									<label>Tag Name</label>
-									<input class="text-input small-input" type="text" id="tag" name="tag" required/> 
-								</p>
-							
-								<p>
-									<input class="button" type="submit" name="submit" value="Submit" />
-								</p>
-								
-							</fieldset>
-							
-							<div class="clear"></div><!-- End .clear -->
-							
-						</form>
-
-           
-
-						
-					</div> <!-- End #tab2 -->  
+					</div> <!-- End #tab1 --> 
 					
 				</div> <!-- End .content-box-content -->
 				
 			</div> <!-- End .content-box -->
 			
 			<div class="clear"></div>
-			<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-			<script>
-				$(document).ready(function(){
-					$("#addCategory").submit(function(){
-						var categoryName = $("#category").val();
-						console.log(categoryName);
-						
-						$.ajax({
-							method: "POST",
-							url: "addCategory.php",
-							data: { categoryName: categoryName }
-						})
-						.done(function(data){ 
-							$('#addCategory').find('input:text').val('');
-							$('#tab1 .success1').show();
-							$('table body').html(data);	
-						});
-					});
-				});
-			</script>-->
-			
-
-			
 			<?php include('footer.php'); ?>

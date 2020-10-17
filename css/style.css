@@ -4183,4 +4183,9 @@ img {
     padding: 5px 2px;
   }
 }
-
+.aa-catg-nav li label , .tag-cloud label {font-weight:400;}
+.aa-catg-nav li input[type="checkbox"] {
+    margin-right:5px;
+}
+.tag-cloud input[type="checkbox"] {display: none;
+}}

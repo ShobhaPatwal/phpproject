@@ -1,29 +1,5 @@
 <?php include('header.php'); ?>
     <?php include('sidebar.php'); ?>
-	<?php
-	$message = '';
-	if (isset($_POST['submit'])) {
-	$name = isset($_POST['name'])?$_POST['name']:'';
-	$price = isset($_POST['price'])?$_POST['price']:'';
-	$category = isset($_POST['category'])?$_POST['category']:'';
-	$tags = implode(',', $_POST['tags']);
-	$description = isset($_POST['description'])?$_POST['description']:'';
-	$image = $_FILES['image']['name'];
-	$tmp_name = $_FILES['image']['tmp_name'];
-	$location = "images/";
-	//$location = "../img/". $category ."/";
-	if (!move_uploaded_file($tmp_name,$location.$image)) {
-		$errors[] = array('input'=>'file', 'msg'=>'Sorry, there was an error uploading your file.');
-	}
-	//check product already exists
-	$checkProduct = checkProduct($name);
-	//add product
-	$addProduct = addProduct($name, $price, $image, $category, $tags, $description);
-    
-
-} 
-
-?>	
 		<div id="main-content"> <!-- Main Content Section with everything -->
 			
 			<noscript> <!-- Show a notification if the user has disabled javascript -->
@@ -58,20 +34,37 @@
 				<div class="content-box-content">
 					
 					<div class="tab-content default-tab" id="tab1"> <!-- This is the target div. id must match the href of this div's tab -->
-						<?php  if (sizeof($errors) > 0) : foreach ($errors as $error) : ?>
+						
+						<!-- Start Notifications-->
+						<?php if(isset($_SESSION['error'])) : ?>
 						<div class="notification error png_bg">
-						    <a href="#" class="close"><img src="resources/images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>
-						    <div>
-							   <?php echo $error['msg']; ?>
-						    </div>
-					    </div>
-						<?php endforeach;  endif; ?>
-						<?php if (isset($_SESSION['success'])) : ?>
+							<a href="#" class="close"><img src="resources/images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>
+							<div>
+								<?php echo $_SESSION['error']; 
+								unset($_SESSION['error']); ?>
+							</div>
+						</div>
+						<?php endif; ?> 
+							
+						<?php if(isset($_SESSION['success'])) : ?>
 						<div class="notification success png_bg">
 							<a href="#" class="close"><img src="resources/images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>
-							<div><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
+							<div>
+								<?php echo $_SESSION['success']; 
+								unset($_SESSION['success']); ?>
+							</div>
 						</div>
-					    <?php endif; ?>
+						<?php endif; ?> 
+						<?php if(isset($_SESSION['message'])) : ?>
+						<div class="notification success png_bg">
+							<a href="#" class="close"><img src="resources/images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>
+							<div>
+								<?php echo $_SESSION['message']; 
+								unset($_SESSION['message']); ?>
+							</div>
+						</div>
+						<?php endif; ?> 
+						<!-- End Notifications -->
 						<table>
 							
 							<thead>
@@ -122,18 +115,42 @@
 									while ($row = $result->fetch_assoc()) {
 								?>
 								<tr>
-									<td><input type="checkbox" /></td>
+									<td><input type="checkbox" name="checkbox[]" id="checkbox[]" value="<?php echo $row['id']; ?>"></td>
 									<td><?php echo $row['id'];?></td>
 									<td class="product"><img src="images/<?php echo $row["image"]; ?>" class="cart-item-image" /><?php echo $row['name'];?></td>
 									<td>$<?php echo $row['price'];?></td>
-									<td><?php echo $row['category_id'];?></td>
-									<td><?php echo $row['tag_id'];?></td>
+
+									<?php 
+									$category_id = $row['category_id'];
+									$query1 = "SELECT name FROM categories WHERE id='$category_id'";
+									$result1 = $conn->query($query1) or die($conn->error);
+									if ($row1 = $result1->fetch_assoc()) :  ?>
+									<td><?php echo $row1['name'];
+									endif;
+									?></td>
+
+									<?php 
+									$query2 = "SELECT tag_id FROM tags_products WHERE product_id='" .$row["id"]. "'";
+									$result2 = $conn->query($query2) or die($conn->error);  ?>
+									<td>
+									<?php 
+									$tags = '';
+									while ($row2 = $result2->fetch_assoc()) {  
+										$query3 = "SELECT name FROM tags WHERE id='" .$row2["tag_id"]. "'";
+										$result3 = $conn->query($query3) or die($conn->error);
+										$row3 = $result3->fetch_assoc();  
+										$tags .= $row3['name'] . ','; 
+									}
+									$tags = trim($tags, ',');    // remove trailing comma
+                                    echo $tags;
+									?>
+									
+								   </td>
 									<td><?php echo $row['description'];?></td>
 									<td>
 										<!-- Icons -->
-										 <a href="#" title="Edit"><img src="resources/images/icons/pencil.png" alt="Edit" /></a>
-										 <a href="products.php?action=remove&product_id=<?php echo $row["id"]; ?>" title="Delete"><img src="resources/images/icons/cross.png" alt="Delete" /></a> 
-										 <a href="#" title="Edit Meta"><img src="resources/images/icons/hammer_screwdriver.png" alt="Edit Meta" /></a>
+										<a href="#" title="Edit"><img src="resources/images/icons/pencil.png" alt="Edit" /></a>
+										<a href="deleteProduct.php?action=remove&product_id=<?php echo $row["id"]; ?>" title="Delete"><img src="resources/images/icons/cross.png" alt="Delete" /></a> 
 									</td>
 								</tr>
 								<?php
@@ -148,7 +165,7 @@
 					
 					<div class="tab-content" id="tab2">
 					
-						<form action="products.php" method="POST"  enctype="multipart/form-data">
+						<form action="addProduct.php" method="POST"  enctype="multipart/form-data">
 							
 							<fieldset> <!-- Set class to "column-left" or "column-right" on fieldsets to divide the form into columns -->
 
@@ -170,24 +187,69 @@
 								<p>
 									<label>Category</label>              
 									<select name="category" class="small-input" required>
-										<option value="men">Men</option>
-										<option value="women">Women</option>
-										<option value="kids">Kids</option>
-										<option value="electronics">Electronics</option>
-										<option value="sports">Sports</option>
+									<?php
+									$sql = "SELECT * FROM categories";
+									$result = $conn->query($sql);
+									if ($result->num_rows > 0) {
+										// output data of each row
+										while ($row = $result->fetch_assoc()) {
+									?>
+										<option value="<?php echo $row['id']; ?>"><?php echo ucfirst($row['name']); ?></option>
+									<?php
+										}
+									} 
+									?>
 									</select> 
 								</p>
 
 								<p class="tags">
 									<label>Tags</label>
-									<input type="checkbox" name=tags[] value="fashion" required/> Fashion
-									<input type="checkbox" name=tags[] value="ecommerce" required/> Ecommerce
-									<input type="checkbox" name=tags[] value="shop" required/> Shop
-									<input type="checkbox" name=tags[] value="handbag" required/> Hand Bag
-									<input type="checkbox" name=tags[] value="laptop" required/> Laptop
-									<input type="checkbox" name=tags[] value="headphone" required/> Headphone
+									<?php
+									$sql = "SELECT * FROM tags";
+									$result = $conn->query($sql);
+									if ($result->num_rows > 0) {
+										// output data of each row
+										while ($row = $result->fetch_assoc()) {
+									?>
+										<input type="checkbox" name=tags[] value="<?php echo $row['id']; ?>" required/> <?php echo ucfirst($row['name']); ?>
+									<?php
+										}
+									} 
+									?>
 								</p>
 								
+
+								<p>
+									<label>Quantity</label>
+									<input class="text-input small-input" type="number" id="quantity" name="quantity" required/> 
+								</p>
+								
+								<p class="colors">
+									<label>Colors</label>
+									<?php
+									$sql1 = "SELECT * FROM color";
+									$result1 = $conn->query($sql1);
+									if ($result1->num_rows > 0) {
+										while ($row = $result->fetch_assoc()) {
+									?>
+										<input type="checkbox" name=color[] value="<?php echo $row['color']; ?>" required/> <?php echo ucfirst($row['color']); ?>
+									<?php
+										}
+									} 
+									?>
+									<input type="checkbox" name=color[] value="black" required/> Black
+									<input type="checkbox" name=color[] value="white" required/> White
+									<input type="checkbox" name=colors[] value="blue" required/> Blue
+									<input type="checkbox" name=color[] value="red" required/> Red
+									<input type="checkbox" name=color[] value="green" required/> Green
+									<input type="checkbox" name=color[] value="yellow" required/> Yellow
+									<input type="checkbox" name=color[] value="orange" required/> Orange
+									<input type="checkbox" name=color[] value="brown" required/> Brown
+									<input type="checkbox" name=color[] value="pink" required/> Pink
+									<input type="checkbox" name=color[] value="gray" required/> Gray
+
+								</p>
+
 								<p>
 									<label>Description</label>
 									<textarea class="text-input textarea wysiwyg" id="description" name="description" cols="79" rows="15" required></textarea>
@@ -211,6 +273,14 @@
 										requiredCheckboxes.removeAttr('required');
 									} else {
             							requiredCheckboxes.attr('required', 'required');
+        							}
+    							});
+								var requiredCheckboxes1 = $('.colors :checkbox[required]');
+								requiredCheckboxes1.change(function(){
+									if(requiredCheckboxes1.is(':checked')) {
+										requiredCheckboxes1.removeAttr('required');
+									} else {
+            							requiredCheckboxes1.attr('required', 'required');
         							}
     							});
 							});

@@ -29,79 +29,124 @@ function loginuser($user, $pass, $checked) {
 
 // check whether PRODUCT already exist with the same name
 function checkProduct($name) {
-    global $conn, $errors;
+    global $conn, $error;
     $check_query = "SELECT * FROM products WHERE name='".$name."'";
     $result = $conn->query($check_query);
     if ($result->num_rows > 0) {
         // output data of each row
         while ($row = $result->fetch_assoc()) {
             if ($row['name'] == $name) {
-                $errors[] = array('input'=>'productname', 'msg'=>'Product already exists');
+                $error = 1;
+                $_SESSION['error'] = $name. " product name already exists";
+                break;
             }
         }
-        return $errors;
+        return $_SESSION['error'];
     } 
     return false;
 }
+
 // add product
-function addProduct($name, $price, $image, $category, $tags, $description) {
-    global $conn, $errors;
-    if (sizeof($errors) == 0) {
-        $sql = "INSERT INTO products (name, price, image, category_id, tag_id, description) VALUES('".$name."', '".$price."', '".$image."', '".$category."', '".$tags."', '".$description."')";
+function addProduct($name, $price, $image, $quantity, $colors, $category, $tags, $description) {
+    global $conn, $error;
+    if ($error == 0) {
+        $sql = "INSERT INTO products (name, price, image, category_id, description) VALUES('".$name."', '".$price."', '".$image."', '".$category."', '".$description."')";
         if ($conn->query($sql) === true) {
-            $_SESSION['success'] = "Product is added";
-            //header('Location: products.php');
+            $last_id = $conn->insert_id;
         } else {
-            $errors[] = array('input'=>'form', 'msg'=>$conn->error);
-            return $errors;
+            $_SESSION['error'] = $conn->error;
         }
     
+        $sql1 = "INSERT INTO stock (product_id, color, quantity) VALUES('".$last_id."', '".$colors."', '".$quantity."')";
+        if ($conn->query($sql1) === false) {
+            $_SESSION['error'] = $conn->error;
+        }
+        if (sizeof($tags) == 1)  {
+            $tag = $tags[0];
+            $sql2 = "INSERT INTO tags_products (product_id, tag_id) VALUES('".$last_id."', '".$tag."')";
+            if ($conn->query($sql2) === true) {
+                $_SESSION['success'] = "Product is added";
+            } else {
+                $_SESSION['error'] = $conn->error;
+            }
+        }
+        else {
+            foreach ($tags as $tag) {
+                $sql3 = "INSERT INTO tags_products (product_id, tag_id) VALUES('".$last_id."', '".$tag."')";
+                if ($conn->query($sql3) === true) {
+                    $_SESSION['success'] = "Product is added";
+                } else {
+                    $_SESSION['error'] = $conn->error;
+                }
+            }
+            
+        }
+       
     }
     return false;
 }
-// delete product
-if (!empty($_GET['action']) && $_GET['action']=="remove") {
-    $id = $_GET["product_id"];
-    $delete = "DELETE FROM products WHERE id='$id'";
-    if ($conn->query($delete) === TRUE) {
-        $message = "Product is deleted";
-    } else {
-        $errors[] = array('input'=>'delete', 'msg'=>$conn->error);
-    }
-    header('Location: products.php');
-}
-
 
 
 // check whether category already exist with the same name
 function checkCategory($catName) {
-    global $conn, $errors;
+    global $conn, $error;
     $check_query = "SELECT * FROM categories WHERE name='".$catName."'";
     $result = $conn->query($check_query);
     if ($result->num_rows > 0) {
         // output data of each row
         while ($row = $result->fetch_assoc()) {
             if ($catName === $row['name']) {
-                $errors[] = array('input'=>'catname', 'msg'=>'Category already exists');
+                $error = 1;
+                $_SESSION['error'] = $catName. " category name already exists";
             }
+            break;
         }
-        return $errors;
+        return $_SESSION['error'];
     } 
     return false;
 }
 // add category
 function addCategory($catName) {
-    global $conn, $errors;
-    if (sizeof($errors) == 0) {
+    global $conn, $error;
+    if ($error == 0) {
         $sql = "INSERT INTO categories (name) VALUES('".$catName."')";
         if ($conn->query($sql) === true) {
             $_SESSION['success'] = "Category is added";
-            return $_SESSION['success'];
         } else {
-            $errors[] = array('input'=>'form', 'msg'=>$conn->error);
-            return $errors;
+            $_SESSION['error'] = $conn->error;
         }
-    
+    }
+    return false;
+}
+
+// check whether tag already exist with the same name
+function checkTag($tagName) {
+    global $conn, $error;
+    $check_query = "SELECT * FROM tags WHERE name='".$tagName."'";
+    $result = $conn->query($check_query);
+    if ($result->num_rows > 0) {
+        // output data of each row
+        while ($row = $result->fetch_assoc()) {
+            if ($tagName === $row['name']) {
+                $error = 1;
+                $_SESSION['error'] = $tagName. " tag name already exists";
+            }
+            break;
+        }
+        return $_SESSION['error'];
+    } 
+    return false;
+}
+// add tag
+function addTag($tagName) {
+    global $conn, $error;
+    if ($error == 0) {
+        $sql = "INSERT INTO tags (name) VALUES('".$tagName."')";
+        if ($conn->query($sql) === true) {
+            $_SESSION['success'] = "Tag is added";
+        } else {
+            $_SESSION['error'] = $conn->error;
+        }
     }
     return false;
 }

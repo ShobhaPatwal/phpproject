@@ -1,5 +1,5 @@
 <?php include('header.php'); ?>
-    <?php include('sidebar.php'); ?>
+	<?php include('sidebar.php'); ?>
 		
 		<div id="main-content"> <!-- Main Content Section with everything -->
 			
@@ -35,66 +35,87 @@
 				<div class="content-box-content">
 					
 					<div class="tab-content default-tab" id="tab1"> <!-- This is the target div. id must match the href of this div's tab -->
-						
-						<div class="notification attention png_bg">
+					    <?php if(isset($_SESSION['error'])) : ?>
+						<!-- Start Notifications-->
+						<div class="notification error png_bg">
 							<a href="#" class="close"><img src="resources/images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>
 							<div>
-								This is a Content Box. You can put whatever you want in it. By the way, you can close this notification with the top-right cross.
+							<?php echo $_SESSION['error']; 
+								unset($_SESSION['error']); ?>
 							</div>
 						</div>
-						<table>
-							<thead>
-								<tr>
-									<th><input class="check-all" type="checkbox"></th>
-									<th>Category Id</th>
-									<th>Category Name</th>
-									<th>Action</th>
-								</tr>							
-							</thead>
-												
-							<tfoot>
-								<tr>
-									<td colspan="6">
-										<div class="bulk-actions align-left">
-											<select name="dropdown">
-												<option value="option1">Choose an action...</option>
-												<option value="option2">Edit</option>
-												<option value="option3">Delete</option>
-											</select>
-											<a class="button" href="#">Apply to selected</a>
-										</div>
-																		
-										<div class="pagination">
-											<a href="#" title="First Page">« First</a><a href="#" title="Previous Page">« Previous</a>
-											<a href="#" class="number" title="1">1</a>
-											<a href="#" class="number" title="2">2</a>
-											<a href="#" class="number current" title="3">3</a>
-											<a href="#" class="number" title="4">4</a>
-											<a href="#" title="Next Page">Next »</a><a href="#" title="Last Page">Last »</a>
-										</div> <!-- End .pagination -->
-										<div class="clear"></div>
-									</td>
-								</tr>
-							</tfoot>
-												
-							<tbody>
+						<?php endif; ?> 
+						
+					    <?php if(isset($_SESSION['success'])) : ?>
+						<div class="notification success png_bg">
+							<a href="#" class="close"><img src="resources/images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>
+							<div>
+								<?php echo $_SESSION['success']; 
+								unset($_SESSION['success']); ?>
+							</div>
+						</div>
+						<?php endif; ?> 
+						<?php if(isset($_SESSION['message'])) : ?>
+						<div class="notification success png_bg">
+							<a href="#" class="close"><img src="resources/images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>
+							<div>
+								<?php echo $_SESSION['message']; 
+								unset($_SESSION['message']); ?>
+							</div>
+						</div>
+						<?php endif; ?> 
+						<!-- End Notifications -->
+						<form action="deleteCategory.php" method="POST">
+							<table>
+								<thead>
+									<tr>
+										<th><input class="check-all" type="checkbox" /></th>
+										<th>Category Id</th>
+										<th>Category Name</th>
+										<th>Action</th>
+									</tr>							
+								</thead>
+													
+								<tfoot>
+									<tr>
+										<td colspan="6">
+											<div class="bulk-actions align-left">
+												<select name="dropdown">
+													<option value="option1">Choose an action...</option>
+													<option value="option2">Delete</option>
+												</select>
+												<input class="button" name="delete" type="submit" value="Apply to selected">
+											</div>
+																			
+											<div class="pagination">
+												<a href="#" title="First Page">« First</a><a href="#" title="Previous Page">« Previous</a>
+												<a href="#" class="number" title="1">1</a>
+												<a href="#" class="number" title="2">2</a>
+												<a href="#" class="number current" title="3">3</a>
+												<a href="#" class="number" title="4">4</a>
+												<a href="#" title="Next Page">Next »</a><a href="#" title="Last Page">Last »</a>
+											</div> <!-- End .pagination -->
+											<div class="clear"></div>
+										</td>
+									</tr>
+								</tfoot>
+													
+								<tbody> 
 								<?php
-								$sql1 = "SELECT * FROM categories";
-								$result = $conn->query($sql1);
+								$sql = "SELECT * FROM categories";
+								$result = $conn->query($sql);
 								if ($result->num_rows > 0) {
 									// output data of each row
 									while ($row = $result->fetch_assoc()) {
 								?>
 
 								<tr class="alt-row">
-									<td><input type="checkbox"></td>
+								    <td><input type="checkbox" name="checkbox[]" id="checkbox[]" value="<?php echo $row['id']; ?>"></td>
 									<td><?php echo $row['id'];?></td>
 									<td><?php echo $row['name'];?></td>
 									<td>
 										<!-- Icons -->
-										<a href="#" title="Edit"><img src="resources/images/icons/pencil.png" alt="Edit"></a>
-										<a href="#" title="Delete"><img src="resources/images/icons/cross.png" alt="Delete"></a> 
-										<a href="#" title="Edit Meta"><img src="resources/images/icons/hammer_screwdriver.png" alt="Edit Meta"></a>
+										<a href="deleteCategory.php?action=remove&category_id=<?php echo $row["id"]; ?>" title="Delete"><img src="resources/images/icons/cross.png" alt="Delete"></a> 
 									</td>
 								</tr>
 										
@@ -102,23 +123,16 @@
 									}
 								} 
 								?>
-							</tbody>
-													
-                        </table>
-                    
+
+								</tbody>
+														
+							</table>
+						</form>
 						
 					</div> <!-- End #tab1 -->
 					
 					<div class="tab-content" id="tab2">
-						<!-- Start Notifications 
-						<div class="notification success png_bg">
-							<a href="#" class="close"><img src="resources/images/icons/cross_grey_small.png" title="Close this notification" alt="close" /></a>
-							<div>
-								Category is added.
-							</div>
-						</div>
-						 End Notifications -->
-						<form id="addCategory">
+						<form id="addCategory" action="addCategory.php" method="POST">
 							
 							<fieldset> <!-- Set class to "column-left" or "column-right" on fieldsets to divide the form into columns -->
 								
@@ -128,7 +142,7 @@
 								</p>
 							
 								<p>
-									<input class="button" type="submit" value="Submit" />
+									<input class="button" type="submit" name="submit" value="Submit" />
 								</p>
 								
 							</fieldset>
@@ -147,25 +161,4 @@
 			</div> <!-- End .content-box -->
 			
 			<div class="clear"></div>
-			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-			<script>
-				$(document).ready(function(){
-					$("#addCategory").on("submit", function(event){
-						event.preventDefault();
-						var categoryName = $("#category").val();
-						console.log(categoryName);
-						$.ajax({
-							method: "POST",
-							url: "addCategory.php",
-							data: { categoryName: categoryName }
-						})
-						.done(function( msg ) {
-							$("#tab2").html(msg);
-						});
-					});
-				});
-			</script>
-			
-
-			
 			<?php include('footer.php'); ?>

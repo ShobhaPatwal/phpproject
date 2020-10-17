@@ -46,11 +46,11 @@
                 </li>
                 
                 <li>
-					<a href="#" class="nav-top-item">
+					<a href="#" class="nav-top-item <?php if($filename == 'orders.php'): ?>current<?php endif; ?>">
 						Orders
 					</a>
 					<ul>
-						<li><a href="#">Manage Orders</a></li>
+						<li><a <?php if($filename == 'orders.php'): ?>class="current"<?php endif; ?>  href="orders.php">Manage Orders</a></li>
 					</ul>
 				</li>
 				
