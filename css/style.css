@@ -4188,4 +4188,24 @@ img {
     margin-right:5px;
 }
 .tag-cloud input[type="checkbox"] {display: none;
-}}
+}
+.aa-product-catg li figure button {
+    width:100%;
+}
+#cart-view { padding: 30px 0; }
+.cart-info {
+  padding: 15px;
+  color: #fff;
+  border-radius: 4px;
+  margin-bottom: 40px;
+  margin-top:40px;
+}
+.cart-empty {
+  background-color: #ff6666;
+}
+.return-to-shop .aa-cart-view-btn {
+  float:left;
+}
+#aa-product .aa-product-area .aa-product-inner .aa-product-catg {
+  float: none;
+}

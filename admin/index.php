@@ -84,8 +84,30 @@
 									<td><?php echo $row['id'];?></td>
 									<td class="product"><img src="images/<?php echo $row["image"]; ?>" class="cart-item-image" /><?php echo $row['name'];?></td>
 									<td>$<?php echo $row['price'];?></td>
-									<td><?php echo $row['category_id'];?></td>
-									<td><?php echo $row['tag_id'];?></td>
+									<?php 
+									$category_id = $row['category_id'];
+									$query1 = "SELECT name FROM categories WHERE id='$category_id'";
+									$result1 = $conn->query($query1) or die($conn->error);
+									if ($row1 = $result1->fetch_assoc()) :  ?>
+									<td><?php echo $row1['name'];
+									endif;
+									?></td>
+									<?php 
+									$query2 = "SELECT tag_id FROM tags_products WHERE product_id='" .$row["id"]. "'";
+									$result2 = $conn->query($query2) or die($conn->error);  ?>
+									<td>
+									<?php 
+									$tags = '';
+									while ($row2 = $result2->fetch_assoc()) {  
+										$query3 = "SELECT name FROM tags WHERE id='" .$row2["tag_id"]. "'";
+										$result3 = $conn->query($query3) or die($conn->error);
+										$row3 = $result3->fetch_assoc();  
+										$tags .= $row3['name'] . ','; 
+									}
+									$tags = trim($tags, ',');    // remove trailing comma
+                                    echo $tags;
+									?>
+									</td>
 									<td><?php echo $row['description'];?></td>
 								</tr>
 								<?php
