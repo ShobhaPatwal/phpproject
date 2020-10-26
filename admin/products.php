@@ -76,6 +76,7 @@
 								   <th>Category</th>
 								   <th>Tags</th>
 								   <th>Description</th>
+								   <th>Quantity</th>
 								   <th>Action</th>
 								</tr>
 								
@@ -144,9 +145,16 @@
 									$tags = trim($tags, ',');    // remove trailing comma
                                     echo $tags;
 									?>
-									
 								   </td>
+
 									<td><?php echo $row['description'];?></td>
+									<?php 
+									$query4 = "SELECT quantity FROM stock WHERE product_id='" .$row["id"]. "'";
+									$result4 = $conn->query($query4) or die($conn->error); 
+									if ($row4 = $result4->fetch_assoc()) :  ?>
+									<td><?php echo $row4['quantity'];
+									endif;
+									?></td>
 									<td>
 										<!-- Icons -->
 										<a href="#" title="Edit"><img src="resources/images/icons/pencil.png" alt="Edit" /></a>
@@ -230,23 +238,14 @@
 									$sql1 = "SELECT * FROM color";
 									$result1 = $conn->query($sql1);
 									if ($result1->num_rows > 0) {
-										while ($row = $result->fetch_assoc()) {
+										while ($row = $result1->fetch_assoc()) {
 									?>
-										<input type="checkbox" name=color[] value="<?php echo $row['color']; ?>" required/> <?php echo ucfirst($row['color']); ?>
+										<input type="checkbox" name=color[] value="<?php echo $row['color']; ?>" required/><?php echo ucfirst($row['color']); ?>
 									<?php
 										}
 									} 
 									?>
-									<input type="checkbox" name=color[] value="black" required/> Black
-									<input type="checkbox" name=color[] value="white" required/> White
-									<input type="checkbox" name=colors[] value="blue" required/> Blue
-									<input type="checkbox" name=color[] value="red" required/> Red
-									<input type="checkbox" name=color[] value="green" required/> Green
-									<input type="checkbox" name=color[] value="yellow" required/> Yellow
-									<input type="checkbox" name=color[] value="orange" required/> Orange
-									<input type="checkbox" name=color[] value="brown" required/> Brown
-									<input type="checkbox" name=color[] value="pink" required/> Pink
-									<input type="checkbox" name=color[] value="gray" required/> Gray
+									
 
 								</p>
 

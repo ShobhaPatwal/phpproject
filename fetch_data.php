@@ -113,7 +113,7 @@ if(isset($_POST["action"]))
                           </div>
                           <div class="aa-prod-view-bottom">
                             <a href="#" class="aa-add-to-cart-btn"><span class="fa fa-shopping-cart"></span>Add To Cart</a>
-                            <a href="product-detail.php?id='.$row["id"]. '" class="aa-add-to-cart-btn">View Details</a>
+                            <a href="product_detail.php?id='.$row["id"]. '" class="aa-add-to-cart-btn">View Details</a>
                           </div>
                         </div>
                       </div>

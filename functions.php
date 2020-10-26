@@ -49,37 +49,38 @@ function checkProduct($name) {
 // add product
 function addProduct($name, $price, $image, $quantity, $colors, $category, $tags, $description) {
     global $conn, $error;
+    $status = 1;
     if ($error == 0) {
-        $sql = "INSERT INTO products (name, price, image, category_id, description) VALUES('".$name."', '".$price."', '".$image."', '".$category."', '".$description."')";
+        $sql = "INSERT INTO products (name, price, image, category_id, description, status) VALUES('".$name."', '".$price."', '".$image."', '".$category."', '".$description."', '".$status."')";
         if ($conn->query($sql) === true) {
             $last_id = $conn->insert_id;
-        } else {
-            $_SESSION['error'] = $conn->error;
-        }
-    
-        $sql1 = "INSERT INTO stock (product_id, color, quantity) VALUES('".$last_id."', '".$colors."', '".$quantity."')";
-        if ($conn->query($sql1) === false) {
-            $_SESSION['error'] = $conn->error;
-        }
-        if (sizeof($tags) == 1)  {
-            $tag = $tags[0];
-            $sql2 = "INSERT INTO tags_products (product_id, tag_id) VALUES('".$last_id."', '".$tag."')";
-            if ($conn->query($sql2) === true) {
-                $_SESSION['success'] = "Product is added";
-            } else {
+            $sql1 = "INSERT INTO stock (product_id, color, quantity) VALUES('".$last_id."', '".$colors."', '".$quantity."')";
+            if ($conn->query($sql1) === false) {
                 $_SESSION['error'] = $conn->error;
             }
-        }
-        else {
-            foreach ($tags as $tag) {
-                $sql3 = "INSERT INTO tags_products (product_id, tag_id) VALUES('".$last_id."', '".$tag."')";
-                if ($conn->query($sql3) === true) {
+            if (sizeof($tags) == 1)  {
+                $tag = $tags[0];
+                $sql2 = "INSERT INTO tags_products (product_id, tag_id) VALUES('".$last_id."', '".$tag."')";
+                if ($conn->query($sql2) === true) {
                     $_SESSION['success'] = "Product is added";
                 } else {
                     $_SESSION['error'] = $conn->error;
                 }
             }
-            
+            else {
+                foreach ($tags as $tag) {
+                    $sql3 = "INSERT INTO tags_products (product_id, tag_id) VALUES('".$last_id."', '".$tag."')";
+                    if ($conn->query($sql3) === true) {
+                        $_SESSION['success'] = "Product is added";
+                    } else {
+                        $_SESSION['error'] = $conn->error;
+                    }
+                }
+                
+            }
+
+        } else {
+            $_SESSION['error'] = $conn->error;
         }
        
     }

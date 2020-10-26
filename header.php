@@ -1,4 +1,4 @@
-<?php 
+;<?php 
 session_start();
 include('config.php'); 
 $url = $_SERVER['REQUEST_URI'];
@@ -278,7 +278,7 @@ $filename = basename($path, '.php');
                             <li><a href="contact.html">Contact</a></li>
                             <li><a href="#">Pages <span class="caret"></span></a>
                                 <ul class="dropdown-menu">                
-                                    <li><a href="product.html">Shop Page</a></li>
+                                    <li><a href="product.php">Shop Page</a></li>
                                     <li><a href="product-detail.html">Shop Single</a></li>                
                                     <li><a href="404.html">404 Page</a></li>                
                                 </ul>

@@ -15,7 +15,7 @@ if (isset($_POST['order'])) {
     $phone_no = $_POST['phone_no'];
     
     //add product
-    $order = placeOrder($name, $price, $image, $quantity, $colors, $category, $tags, $description);
+    //$order = placeOrder($name, $price, $image, $quantity, $colors, $category, $tags, $description);
 
 }
 

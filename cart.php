@@ -1,10 +1,6 @@
 <?php 
 $title = "Cart";
 include('header.php');
-if (isset($_POST['update'])) {
-  $quantity = $_POST['quantity'];
-  print_r($quantity);
-}
 ?>
   <!-- catg header banner section -->
   <section id="aa-catg-head-banner">
@@ -14,7 +10,7 @@ if (isset($_POST['update'])) {
       <div class="aa-catg-head-banner-content">
         <h2>Cart Page</h2>
         <ol class="breadcrumb">
-          <li><a href="index.html">Home</a></li>                   
+          <li><a href="index.php">Home</a></li>                   
           <li class="active">Cart</li>
         </ol>
       </div>
@@ -39,7 +35,7 @@ if (isset($_POST['update'])) {
           <div class='cart-empty cart-info'><?php echo $_SESSION['success']; unset($_SESSION['success']);  ?> </div>
         <?php }  ?>
            <div class="cart-view-table">
-             <form action="cart.php" method="post">
+             <form action="update_cart.php" method="post">
                <div class="table-responsive">
                   <table class="table">
                     <thead>
@@ -62,7 +58,7 @@ if (isset($_POST['update'])) {
                         <td><a class="aa-cart-title" href="#"><?php echo $item["name"]; ?></a></td>
                         <td>$<?php echo $item["price"]; ?></td>
 
-                        <td><input class="aa-cart-quantity" type="number" name="quantity[]" value="<?php echo $item["quantity"]; ?>" min="1"></td>
+                        <td><input class="aa-cart-quantity" type="number" name="quantity[<?php echo $item["id"]; ?>]" value="<?php echo $item["quantity"]; ?>" min="1"></td>
                         <td><?php echo "$".number_format(($item["quantity"]*$item["price"]), 2) ?></td>
                       </tr>
                       <?php
@@ -97,7 +93,7 @@ if (isset($_POST['update'])) {
                    </tr>
                  </tbody>
                </table>
-               <a href="#" class="aa-cart-view-btn">Proced to Checkout</a>
+               <a href="checkout.php" class="aa-cart-view-btn">Proced to Checkout</a>
              </div>
            </div>
          </div>
