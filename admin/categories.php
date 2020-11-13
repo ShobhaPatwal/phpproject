@@ -122,6 +122,9 @@
 								<?php
 									}
 								} 
+								else {
+									echo "No category is added";
+								}
 								?>
 
 								</tbody>

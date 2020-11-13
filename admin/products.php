@@ -126,7 +126,7 @@
 									$query1 = "SELECT name FROM categories WHERE id='$category_id'";
 									$result1 = $conn->query($query1) or die($conn->error);
 									if ($row1 = $result1->fetch_assoc()) :  ?>
-									<td><?php echo $row1['name'];
+									<td><?php echo ucfirst($row1['name']);
 									endif;
 									?></td>
 

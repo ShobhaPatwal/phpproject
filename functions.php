@@ -50,6 +50,8 @@ function checkProduct($name) {
 function addProduct($name, $price, $image, $quantity, $colors, $category, $tags, $description) {
     global $conn, $error;
     $status = 1;
+    $name = str_replace("'","\'",$name);
+    $description = str_replace("'","\'",$description);
     if ($error == 0) {
         $sql = "INSERT INTO products (name, price, image, category_id, description, status) VALUES('".$name."', '".$price."', '".$image."', '".$category."', '".$description."', '".$status."')";
         if ($conn->query($sql) === true) {

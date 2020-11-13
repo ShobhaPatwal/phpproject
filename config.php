@@ -3,7 +3,7 @@
 $siteurl = "http://localhost/training/projects/";
 $dbhost = "localhost";
 $dbuser = "root";
-$dbpass = "password";
+$dbpass = "";
 $dbname = "shopping_store";
 
 // Create connection

@@ -5,7 +5,7 @@
         $productmenu = array('products.php','categories.php','tags.php');
     ?>
 			
-			<h1 id="sidebar-title"><a href=#"index.php>Simpla Admin</a></h1>
+			<h1 id="sidebar-title"><a href="index.php">Simpla Admin</a></h1>
 		  
 			<!-- Logo (221px wide) -->
 			<a href="index.php"><img id="logo" src="resources/images/logo.png" alt="Simpla Admin logo" /></a>
