@@ -2,8 +2,8 @@
 $title = "Products";
 include('header.php');
 // for pagination purposes
-$page = isset($_GET['page']) ? $_GET['page'] : 1; // page is the current page, if there's nothing set, default is page 1
-$records_per_page = 6; // set records or rows of data per page
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+$records_per_page = 6;
  
 ?> 
         <!-- catg header banner section -->
@@ -59,93 +59,22 @@ $records_per_page = 6; // set records or rows of data per page
 
             </div>
 
-           <?php
-/*  echo "<div class='col-md-12'>";
- 
-    echo "<ul class='pagination m-b-20px m-t-0px'>";
-    $page_url="product.php?";
-    $page_query = "SELECT * FROM products";
-    $page_result = $conn->query($page_query);
-    $total_rows = $page_result->num_rows;
-    // button for first page
-    if($page>1){
-        echo "<li><a href='{$page_url}' title='Go to the first page.'>";
-            echo "First Page";
-        echo "</a></li>";
-    }
- 
-    $total_pages = ceil($total_rows / $records_per_page);
- 
-    // range of links to show
-    $range = 2;
- 
-    // display links to 'range of pages' around 'current page'
-    $initial_num = $page - $range;
-    $condition_limit_num = ($page + $range)  + 1;
- 
-    for ($x=$initial_num; $x<$condition_limit_num; $x++) {
- 
-        // be sure '$x is greater than 0' AND 'less than or equal to the $total_pages'
-        if (($x > 0) && ($x <= $total_pages)) {
- 
-            // current page
-            if ($x == $page) {
-                echo "<li class='active'><a href=\"#\">$x <span class=\"sr-only\">(current)</span></a></li>";
-            }
- 
-            // not current page
-            else {
-                echo "<li><a href='{$page_url}page=$x'>$x</a></li>";
-            }
-        }
-    }
- 
-    // button for last page
-    if($page<$total_pages){
-        echo "<li>";
-            echo "<a href='" . $page_url . "page={$total_pages}' title='Last page is {$total_pages}.'>";
-                echo "Last Page";
-            echo "</a>";
-        echo "</li>";
-    }
- 
-    echo "</ul>";
-echo "</div>";  */
-?>   
             <div class="aa-product-catg-pagination">
               <nav>
               <ul class="pagination">
-              <?php  /*
+              <?php 
                 $page_query = "SELECT * FROM products";
                 $page_result = $conn->query($page_query);
                 $total_records = $page_result->num_rows;
-                $total_pages = ceil($total_records/$record_per_page);
-                $start_loop = $page;
-                $difference = $total_pages - $page;
-                if($difference <= 5)
+                $total_pages = ceil($total_records/$records_per_page);
+                $display = ($page-1)*$records_per_page;
+                for ($page=1; $page<= $total_pages; $page++)
                 {
-                $start_loop = $total_pages - 5;
+                  echo "<li><a href='product.php?page=".$page."'>".$page."</a></li>";
                 }
-                $end_loop = $start_loop + 4;
-                if($page > 1)
-                {
-                //echo "<li><a href='product.php?page=2'>First</a></li>";
-                echo "<li><a href='product.php?page=".($page - 1)."' aria-label='Previous'> <span aria-hidden='true'>&laquo;</span></a></li>";
-                }
-                for($i=1; $i<=$total_pages; $i++) 
-                {     
-                echo "<li><a href='product.php?page=".$i."'>".$i."</a></li>";
-                }
-                if($page <= $end_loop)
-                {
-                echo "<li><a href='product.php?page=".($page + 1)."' aria-label='Next'> <span aria-hidden='true'>&raquo;</span></a></li>";
-                //echo "<li><a href='product.php?page=".$total_pages."'>Last</a></li>";
-                }
-                
-                */
                 ?>
                 </ul>
-
+               <span id="display" style="display:none;"><?php echo $display; ?></span>
               </nav>
             </div>
           </div>
@@ -207,18 +136,18 @@ echo "</div>";  */
             <div class="aa-sidebar-widget">
               <h3>Shop By Color</h3>
               <div class="aa-color-tag">
-                <a class="aa-color-green" href="#"></a>
-                <a class="aa-color-yellow" href="#"></a>
-                <a class="aa-color-pink" href="#"></a>
-                <a class="aa-color-purple" href="#"></a>
-                <a class="aa-color-blue" href="#"></a>
-                <a class="aa-color-orange" href="#"></a>
-                <a class="aa-color-gray" href="#"></a>
-                <a class="aa-color-black" href="#"></a>
-                <a class="aa-color-white" href="#"></a>
-                <a class="aa-color-cyan" href="#"></a>
-                <a class="aa-color-olive" href="#"></a>
-                <a class="aa-color-orchid" href="#"></a>
+              <?php
+                $sql1 = "SELECT * FROM color";
+                $result1 = $conn->query($sql1);
+                if ($result1->num_rows > 0) {
+                  // output data of each row
+                  while ($row1 = $result1->fetch_assoc()) {
+                    ?>
+                      <a class="aa-color-<?php echo strtolower($row1['color']); ?>" href="#"><input type="checkbox" style="opacity:0;" class="common_selector color" value="<?php echo $row1['color']; ?>"  > </a>
+                      <?php
+                    }
+                } 
+                ?>
               </div>                            
             </div>
             <!-- single sidebar -->
@@ -305,15 +234,16 @@ $(document).ready(function(){
     {
         $('.aa-product-catg-body').html('<div id="loading" style="" ></div>');
         var action = 'fetch_data';
+        var display = $('#display').text();
         var minimum_price = $('#hidden_minimum_price').val();
         var maximum_price = $('#hidden_maximum_price').val();
         var category = get_filter('category');
         var tag = get_filter('tag');
-        var storage = get_filter('storage');
+        var color = get_filter('color');
         $.ajax({
             url:"fetch_data.php",
             method:"POST",
-            data:{action:action, minimum_price:minimum_price, maximum_price:maximum_price, category:category, tag:tag, storage:storage},
+            data:{action:action, display:display, minimum_price:minimum_price, maximum_price:maximum_price, category:category, tag:tag, color:color},
             success:function(data){
                 $('.aa-product-catg-body').html(data);
             }

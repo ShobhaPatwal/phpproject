@@ -3,10 +3,11 @@
 //fetch_data.php
 $records_per_page = 6;
 include('config.php');
-
+$display = $_POST["display"];
 if(isset($_POST["action"]))
 {
-	$query = "SELECT * FROM products WHERE status = '1'";
+  //ECHO $query = "SELECT * FROM products LIMIT " .$display.','.$records_per_page ;
+  echo $query = "SELECT * FROM products WHERE status = '1'";
 	if(isset($_POST["minimum_price"], $_POST["maximum_price"]) && !empty($_POST["minimum_price"]) && !empty($_POST["maximum_price"]))
 	{
 		$query .= "
@@ -29,16 +30,23 @@ if(isset($_POST["action"]))
       $product_id .= $row2["product_id"].",";
     }
     $product_id = trim($product_id, ','); 
-		$query .= " OR id IN('".$product_id."')
+		$query .= " AND id IN('".$product_id."')
 		";
 	}
-	if(isset($_POST["storage"]))
+	if(isset($_POST["color"]))
 	{
-		$storage_filter = implode("','", $_POST["storage"]);
-		$query .= "
-		 AND product_storage IN('".$storage_filter."')
+    $color = implode("','", $_POST["color"]);
+    $query3 = "SELECT DISTINCT(product_id) FROM stock WHERE color IN('".$color."')";
+    $result3 = $conn->query($query3);
+    $product_id = '';
+    while ($row3 = $result3->fetch_assoc()) {
+      $product_id .= $row3["product_id"].",";
+    }
+    $product_id = trim($product_id, ','); 
+		$query .= " AND id IN('".$product_id."')
 		";
-	}
+  }
+  $query .= "LIMIT " .$display.','.$records_per_page;
     $result = $conn->query($query);
     $output = '';
     if ($result->num_rows > 0) {

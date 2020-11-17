@@ -1895,6 +1895,9 @@ img {
 #aa-product-category .aa-sidebar .aa-sidebar-widget .aa-color-tag .aa-color-black {
   background-color: #000;
 }
+#aa-product-category .aa-sidebar .aa-sidebar-widget .aa-color-tag .aa-color-brown {
+  background-color: brown;
+}
 #aa-product-category .aa-sidebar .aa-sidebar-widget .aa-color-tag .aa-color-white {
   background-color: #FFF;
   border: 1px solid #ccc;
